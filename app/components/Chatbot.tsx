@@ -168,17 +168,13 @@ function useTTS(interactionMode: InteractionMode, setIsBotTyping: React.Dispatch
         try {
             const response = await fetch(API_ENDPOINTS.TTS, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) });
             if (!response.ok) {
-                // Leggiamo l'errore specifico dal server TTS se disponibile
                 const errorData = await response.json().catch(() => null);
                 console.error("Error from TTS API:", errorData?.error || response.statusText);
                 stopSpeech();
                 return;
             }
-
-            // Gestione dello streaming dell'audio
             const audioBlob = await response.blob();
             const audioUrl = URL.createObjectURL(audioBlob);
-
             if (audioRef.current) {
                 audioRef.current.src = audioUrl;
                 audioRef.current.onplaying = () => { setIsAudioActuallyPlaying(true); setIsTtsPaused(false); };
@@ -189,7 +185,6 @@ function useTTS(interactionMode: InteractionMode, setIsBotTyping: React.Dispatch
                 if (playPromise !== undefined) {
                     playPromise.catch(e => {
                         console.error("Error playing audio:", e);
-                        // Non chiamare stopSpeech() qui, l'errore è già gestito e si evitano loop
                     });
                 }
             } else {
@@ -205,7 +200,7 @@ function useTTS(interactionMode: InteractionMode, setIsBotTyping: React.Dispatch
     return { isTtsEnabled: isTtsEffectivelyEnabled, isBotSpeakingIntent, isAudioActuallyPlaying, isTtsPaused, audioRef, playSpeech, stopSpeech, pauseSpeech, resumeSpeech };
 }
 
-// --- Componenti UI Riutilizzabili (con stili aggiornati) ---
+// --- Componenti UI Riutilizzabili ---
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> { children: React.ReactNode; variant?: "destructive" | "default" | "ghost"; }
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({ children, className, variant = "default", disabled, ...rest }, ref) => (
     <button
@@ -276,7 +271,8 @@ const MarkdownMessageContent = React.memo(({ text }: { text: string }) => (
             ul: (props) => <ul className={`list-disc list-inside my-1 break-words ${colorPalette.textHighlight}`} {...props} />,
             ol: (props) => <ol className={`list-decimal list-inside my-1 break-words ${colorPalette.textHighlight}`} {...props} />,
             li: (props) => <li className={`my-0.5 break-words ${colorPalette.textHighlight}`} {...props} />,
-            pre: (props) => <pre className={`custom-scrollbar-matrix overflow-x-auto whitespace-pre-wrap break-all ${colorPalette.botMessageBackground} p-2 my-1 rounded text-xs border ${colorPalette.border}`} {...props} />,
+            // --- MODIFICA RESPONSIVE --- Semplificate le classi, rimosso `break-all` ridondante.
+            pre: (props) => <pre className={`custom-scrollbar-matrix overflow-x-auto whitespace-pre-wrap ${colorPalette.botMessageBackground} p-2 my-1 rounded text-xs border ${colorPalette.border}`} {...props} />,
             code: (props: React.HTMLAttributes<HTMLElement> & { inline?: boolean }) => {
                 const { inline, ...rest } = props;
                 const codeClassName = inline ? `px-1 py-0.5 ${colorPalette.botMessageBackground} border ${colorPalette.border} rounded-sm text-xs` : ``;
@@ -320,10 +316,11 @@ const Sidebar: React.FC<SidebarProps> = ({ sessions, currentSessionId, onNewSess
                         onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && onSelectSession(session.id)}
                         aria-current={currentSessionId === session.id ? "page" : undefined}
                     >
-                        <span className="truncate text-sm font-medium">{session.title}</span>
+                        {/* --- MODIFICA RESPONSIVE --- Rimuoviamo 'truncate' per permettere al testo di andare a capo. */}
+                        <span className="text-sm font-medium break-words">{session.title}</span>
                         <button
                             onClick={(e) => { e.stopPropagation(); onDeleteSession(session.id); }}
-                            className="p-1 text-gray-400 opacity-0 group-hover:opacity-100 hover:text-red-500 transition-opacity duration-150"
+                            className="p-1 text-gray-400 opacity-0 group-hover:opacity-100 hover:text-red-500 transition-opacity duration-150 flex-shrink-0" // Aggiunto flex-shrink-0
                             aria-label={`Elimina chat ${session.title}`} disabled={disabledActions}
                         >
                             <Trash2 className="h-4 w-4" />
@@ -341,8 +338,8 @@ const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({ message }) => 
         transition={{ type: "spring", stiffness: 260, damping: 25 }}
         className={cn("flex w-full items-end group relative", message.sender === "user" ? "justify-end" : "justify-start")}>
         <div className={cn(
-            "px-4 py-3 rounded-lg break-words text-sm md:text-base shadow-md border max-w-[80%] sm:max-w-[70%] md:max-w-[60%]",
-            "overflow-hidden",
+            "px-4 py-3 rounded-lg text-sm md:text-base shadow-md border max-w-[80%] sm:max-w-[70%] md:max-w-[60%]",
+            "overflow-hidden", // 'break-words' è ora dentro i componenti figlio, quindi questo è per sicurezza
             message.sender === "user"
                 ? `${colorPalette.accent} text-white ${colorPalette.border}`
                 : `${colorPalette.botMessageBackground} ${colorPalette.textHighlight} ${colorPalette.border}`,
@@ -369,7 +366,6 @@ const ChatbotComponent: React.FC<ChatbotProps> = ({ interactionMode }) => {
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState<boolean>(false);
     const [showScrollToBottom, setShowScrollToBottom] = useState<boolean>(false);
     const [isFirstInteraction, setIsFirstInteraction] = useState(true);
-    // ***** SOLUZIONE: Aggiunto un nuovo stato per "sbloccare" l'audio *****
     const [isAudioContextUnlocked, setIsAudioContextUnlocked] = useState(false);
     
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -434,12 +430,8 @@ const ChatbotComponent: React.FC<ChatbotProps> = ({ interactionMode }) => {
     const handleDeleteSession = useCallback((sessionId: number) => { if (interactionMode === 'chat') { deleteSession(sessionId); setIsFirstInteraction(true); setInput(""); } }, [deleteSession, interactionMode]);
     
     const handleSend = useCallback(async () => {
-        // ***** SOLUZIONE: Logica per sbloccare l'audio al primo click *****
         if (!isAudioContextUnlocked) {
             try {
-                // Eseguiamo un play/pause "finto" e silenzioso sull'elemento audio vuoto.
-                // Questo è un gesto diretto dell'utente e il browser lo permette,
-                // "sbloccando" l'audio per le riproduzioni successive.
                 audioRef.current?.play().catch(() => {});
                 audioRef.current?.pause();
                 setIsAudioContextUnlocked(true);
@@ -508,6 +500,7 @@ const ChatbotComponent: React.FC<ChatbotProps> = ({ interactionMode }) => {
         else if (isTtsPaused) { ActionButtonIcon = PlayCircle; actionButtonOnClick = () => { resumeSpeech(); }; actionButtonAriaLabel = "Riprendi audio"; actionButtonDisabled = false; }
         else { ActionButtonIcon = Send; actionButtonOnClick = handleSend; actionButtonAriaLabel = "Invia messaggio"; actionButtonDisabled = true; }
     } else { actionButtonDisabled = !input.trim() || isBotTyping || isBotSpeakingIntent; }
+    
     const headerTitle = useMemo(() => {
         if (interactionMode === 'tts') return "Scrivimi, sono qui per ascoltarti";
         if (interactionMode === 'chat') {
@@ -543,23 +536,27 @@ const ChatbotComponent: React.FC<ChatbotProps> = ({ interactionMode }) => {
                 </>
             )}
 
-            <div className={`flex-1 flex flex-col max-h-screen ${colorPalette.background}`}>
-                <div className={`p-3 md:p-4 ${colorPalette.border} border-b ${colorPalette.surface} flex items-center justify-between sticky top-0 z-30`}>
+            <div className={`flex-1 flex flex-col max-h-screen ${colorPalette.background} min-w-0`}>
+                <div className={`p-3 md:p-4 ${colorPalette.border} border-b ${colorPalette.surface} flex items-center justify-between sticky top-0 z-30 gap-2`}>
                     <Link href="/" aria-label="Torna alla selezione modalità">
-                        <Button variant="ghost" className="p-2">
+                        <Button variant="ghost" className="p-2 flex-shrink-0">
                             <ChevronLeft className="h-5 w-5" />
                         </Button>
                     </Link>
-                    <h1 className={`text-md md:text-xl font-semibold ${colorPalette.textTitle} truncate px-2 text-center flex-grow`}>
+                    {/* --- MODIFICA RESPONSIVE --- Rimosso 'truncate' per permettere al titolo di andare a capo. 'min-w-0' previene il collasso. */}
+                    <h1 className={`text-md md:text-xl font-semibold ${colorPalette.textTitle} text-center flex-grow min-w-0 break-words`}>
                         {headerTitle}
                     </h1>
-                    {interactionMode === 'chat' && (
-                        <Button variant="ghost" onClick={() => setIsMobileSidebarOpen(true)} className="p-2 md:hidden" aria-label="Apri cronologia chat">
+                    {interactionMode === 'chat' ? (
+                        <Button variant="ghost" onClick={() => setIsMobileSidebarOpen(true)} className="p-2 md:hidden flex-shrink-0" aria-label="Apri cronologia chat">
                             <Menu className="h-5 w-5" />
                         </Button>
+                    ) : (
+                        // Placeholder per mantenere l'allineamento del titolo
+                        <div className="w-9 h-9 flex-shrink-0"></div>
                     )}
-                    {(interactionMode === 'tts' || (interactionMode === 'chat' && !isMobileSidebarOpen)) && <div className="w-8 md:w-auto md:hidden"></div>}
-                    {interactionMode === 'chat' && <div className="w-8 hidden md:block"></div>}
+                     {/* Placeholder per allineamento su desktop */}
+                    <div className="w-9 h-9 hidden md:block flex-shrink-0"></div>
                 </div>
 
                 <div className="flex-1 relative overflow-hidden">
@@ -572,7 +569,7 @@ const ChatbotComponent: React.FC<ChatbotProps> = ({ interactionMode }) => {
                             {interactionMode === 'tts' && !isTtsPaused && visualActivityState === "processing" && (<p className={`absolute bottom-24 md:bottom-32 ${colorPalette.textPrimary} text-sm animate-pulse`}> Sto elaborando... </p>)}
                         </div>
                     )}
-                    {interactionMode === 'chat' && (<div className="absolute inset-0 z-[-1] opacity-10 md:opacity-15 pointer-events-none"></div>)}
+                    
                     {interactionMode === 'chat' && (
                         <>
                             {currentSessionId === null || !currentSession ? (
@@ -602,6 +599,8 @@ const ChatbotComponent: React.FC<ChatbotProps> = ({ interactionMode }) => {
                         </>
                     )}
                 </div>
+                
+                {/* --- MODIFICA RESPONSIVE --- Area di input corretta e animata --- */}
                 <div className={`p-3 md:p-4 ${colorPalette.border} border-t ${colorPalette.surface} sticky bottom-0 z-10`}>
                     <div className="max-w-4xl mx-auto flex items-end space-x-2 md:space-x-3">
                         <TextareaAutosize
@@ -609,17 +608,34 @@ const ChatbotComponent: React.FC<ChatbotProps> = ({ interactionMode }) => {
                             value={input}
                             onChange={handleInputChange}
                             placeholder={interactionMode === 'tts' ? "Scrivi qui per interagire..." : (currentSessionId === null && sessions.length === 0 ? "Inizia una nuova chat..." : "Invia un segnale... (Shift+Enter per nuova riga)")}
-                            className="flex-1 text-sm md:text-base"
+                            className="flex-1 text-sm md:text-base min-w-0"
                             onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey && ActionButtonIcon === Send) { e.preventDefault(); if (!actionButtonDisabled) handleSend(); } }}
                             disabled={textareaDisabled}
                             aria-label="Scrivi un messaggio" />
-                        <Button
-                            onClick={actionButtonOnClick}
-                            className={cn("p-3 aspect-square self-end mb-[1px]")}
-                            disabled={actionButtonDisabled}
-                            aria-label={actionButtonAriaLabel}>
-                            <ActionButtonIcon className="h-5 w-5" />
-                        </Button>
+                        <div className="relative flex flex-col items-center">
+                             <Button
+                                onClick={actionButtonOnClick}
+                                className={cn(
+                                    "p-3 aspect-square self-end flex-shrink-0 transition-all duration-200 ease-in-out",
+                                    (isAudioActuallyPlaying || isTtsPaused) && !isBotTyping ? "scale-110" : "scale-100"
+                                )}
+                                disabled={actionButtonDisabled}
+                                aria-label={actionButtonAriaLabel}
+                                aria-live="polite"
+                            >
+                                <AnimatePresence mode="wait">
+                                    <motion.div
+                                        key={actionButtonAriaLabel} 
+                                        initial={{ opacity: 0, scale: 0.5 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        exit={{ opacity: 0, scale: 0.5 }}
+                                        transition={{ duration: 0.15 }}
+                                    >
+                                        <ActionButtonIcon className="h-5 w-5" />
+                                    </motion.div>
+                                </AnimatePresence>
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </div>

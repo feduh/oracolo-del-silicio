@@ -224,44 +224,45 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({ childr
 ));
 Button.displayName = "Button";
 
-const TextareaAutosize = React.forwardRef<HTMLTextAreaElement, React.TextareaHTMLAttributes<HTMLTextAreaElement>>(({ className, value, onChange, ...rest }, ref) => {
-    const internalRef = useRef<HTMLTextAreaElement>(null);
-    React.useImperativeHandle(ref, () => internalRef.current as HTMLTextAreaElement);
-    useEffect(() => {
-        const textarea = internalRef.current;
-        if (textarea) {
-            textarea.style.height = 'auto';
-            const maxHeight = 160;
-            if (textarea.scrollHeight <= maxHeight) {
-                textarea.style.height = `${textarea.scrollHeight}px`;
-                textarea.style.overflowY = 'hidden';
-            } else {
-                textarea.style.height = `${maxHeight}px`;
-                textarea.style.overflowY = 'auto';
-            }
-        }
-    }, [value]);
+const TextareaAutosize = React.forwardRef<
+    HTMLTextAreaElement,
+    React.TextareaHTMLAttributes<HTMLTextAreaElement>
+>(({ value, className, ...props }, ref) => {
     return (
-        <textarea
-            ref={internalRef}
-            value={value}
-            onChange={onChange}
-            rows={1}
-            className={cn(
-                "flex-1 text-sm md:text-base resize-none py-2 px-3 custom-scrollbar-matrix rounded-lg",
-                "max-h-40",
-                colorPalette.surface,
-                colorPalette.border,
-                colorPalette.textPrimary,
-                "placeholder:text-[#2e8b57]/70",
-                "focus:outline-none",
-                className
-            )}
-            {...rest}
-        />
+        // Usiamo un contenitore grid per sovrapporre il textarea a un div nascosto
+        // che funge da "misuratore" di altezza.
+        <div className="grid flex-1">
+            <div
+                // Questo div nascosto contiene il testo e si espande automaticamente.
+                // Il `\n` alla fine assicura che l'altezza sia corretta anche per l'ultima riga.
+                className={cn(
+                    "invisible whitespace-pre-wrap break-words [grid-area:1/1/2/2]",
+                    "text-sm md:text-base py-2 px-3" // Assicurati che padding/font corrispondano al textarea
+                )}
+            >
+                {value}{'\n'}
+            </div>
+            <textarea
+                ref={ref}
+                value={value}
+                rows={1}
+                // Il textarea si adatta all'altezza del contenitore grid.
+                className={cn(
+                    "resize-none overflow-hidden [grid-area:1/1/2/2] bg-transparent",
+                    "w-full text-sm md:text-base py-2 px-3 custom-scrollbar-matrix rounded-lg",
+                    colorPalette.surface,
+                    colorPalette.border,
+                    colorPalette.textPrimary,
+                    "placeholder:text-[#2e8b57]/70",
+                    "focus:outline-none focus:ring-0", // Rimosso il ring per un look più pulito, ma puoi riattivarlo se preferisci
+                    className
+                )}
+                {...props}
+            />
+        </div>
     );
 });
-TextareaAutosize.displayName = "TextareaAutosize";
+TextareaAutosize.displayName = 'TextareaAutosize';
 
 const MarkdownMessageContent = React.memo(({ text }: { text: string }) => (
     <ReactMarkdown
@@ -517,7 +518,7 @@ const ChatbotComponent: React.FC<ChatbotProps> = ({ interactionMode }) => {
     }
 
     return (
-        <div className={`h-screen flex ${colorPalette.background} font-mono antialiased`}>
+        <div className={`h-full flex ${colorPalette.background} font-mono antialiased`}>
             {interactionMode === 'chat' && (
                 <>
                     <AnimatePresence>
@@ -607,7 +608,7 @@ const ChatbotComponent: React.FC<ChatbotProps> = ({ interactionMode }) => {
                             ref={textareaRef}
                             value={input}
                             onChange={handleInputChange}
-                            placeholder={interactionMode === 'tts' ? "Scrivi qui per interagire..." : (currentSessionId === null && sessions.length === 0 ? "Inizia una nuova chat..." : "Invia un segnale... (Shift+Enter per nuova riga)")}
+                            placeholder={interactionMode === 'tts' ? "Scrivi le tue domande..." : (currentSessionId === null && sessions.length === 0 ? "Inizia una nuova chat..." : "Invia un nuovo segnale... ")}
                             className="flex-1 text-sm md:text-base min-w-0"
                             onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey && ActionButtonIcon === Send) { e.preventDefault(); if (!actionButtonDisabled) handleSend(); } }}
                             disabled={textareaDisabled}

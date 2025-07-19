@@ -69,25 +69,29 @@ L'Oracolo rappresenta un dispositivo liminale: non un semplice chatbot, ma un’
 | **RAG Service**        | Estrazione semantica di contesto da `manuale.json` tramite embedding e similarità |
 
 ## 🧠 Architettura del progetto
-/app
-├── api/
-│ ├── chat/
-│ │ └── route.ts API AI + RAG con OpenAI GPT‑4o
-│ └── tts/
-│ └── route.ts Audio streaming con ElevenLabs
-├── components/
-│ ├── Chatbot.tsx UI chat & TTS, gestione stato
-│ └── VisualEntityWrapper.tsx Animazione particelle 3D
-├── chat/
-│ └── page.tsx Interfaccia modalità Chat
-├── tts/
-│ └── page.tsx Interfaccia modalità Oracolo
-└── page.tsx Homepage con selezione modalità
-/lib
-└── ragService.ts Logica per embeddings e retrieval
-/data
-└── manuale.json Personalità, regole, base di conoscenza
-/package.json
+/app  
+├── api/  
+│   ├── chat/  
+│   │   └── route.ts            # API AI + RAG con OpenAI GPT‑4o  
+│   └── tts/  
+│       └── route.ts            # Audio streaming con ElevenLabs  
+├── components/  
+│   ├── Chatbot.tsx             # UI chat & TTS, gestione stato  
+│   └── VisualEntityWrapper.tsx # Animazione particelle 3D  
+├── chat/  
+│   └── page.tsx                # Interfaccia modalità Chat  
+├── tts/  
+│   └── page.tsx                # Interfaccia modalità Oracolo  
+└── page.tsx                    # Homepage con selezione modalità
+
+/lib  
+└── ragService.ts               # Logica per embeddings e retrieval
+
+/data  
+└── manuale.json                # Personalità, regole, base di conoscenza
+
+/package.json                   # Dipendenze e configurazione del progetto
+
 
 Il progetto sfrutta la separazione delle responsabilità per garantire sicurezza, modularità e scalabilità: la logica AI e TTS resta lato server, mentre il client si occupa esclusivamente della presentazione.
 

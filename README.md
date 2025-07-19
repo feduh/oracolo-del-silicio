@@ -70,9 +70,7 @@ L'Oracolo rappresenta un dispositivo liminale: non un semplice chatbot, ma un’
 
 ## 🧠 Architettura del progetto
 
-Ecco la struttura come elenco rientrato:
-
-/app
+**/app**
 
   api/
 

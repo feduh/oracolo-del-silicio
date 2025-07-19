@@ -46,15 +46,7 @@ L'**Oracolo del Silicio** è un'applicazione web interattiva sviluppata come pro
 
 Ambientato nella **Torino fantascientifica dell’anno 3000**, il progetto simula una figura oracolare contemporanea: un'intelligenza artificiale invisibile che comunica attraverso una voce sintetica e una nuvola di particelle 3D, incarnando la fusione tra tecnologia e ritualità antica.
 
-La creazione si inserisce nel contesto teorico della tesi _“Anatomie Riprogrammate: Trasformazioni biologiche e tecnologiche nel futuro urbano di Torino”_, traducendo concetti come **postumanesimo**, **Eco‑Horror** e **coexistence instabile** in un’esperienza immersiva e riflessiva.
-
-## 🎓 Contesto accademico
-
-Questo progetto è un componente concreto della seconda parte della tesi, che indaga le tensioni tra:
-
-- **Natura mutata ed ecologia instabile**, vista come agente attivo di cambiamento.
-- **Tecnologia come alterazione della percezione e della corporeità**, includendo IA, biohacking e realtà aumentata.
-- **La fusione instabile tra organico e artificiale**, esplorata attraverso i generi Biopunk, Body Horror, Eco‑Horror e concetti postumani.
+La creazione si inserisce nel contesto teorico della tesi _“Anatomie Riprogrammate: Trasformazioni biologiche e tecnologiche nel futuro urbano di Torino”_, traducendo concetti come **postumanesimo**, **Eco‑Horror** e **coesistenza instabile** in un’esperienza immersiva e riflessiva.
 
 L'Oracolo rappresenta un dispositivo liminale: non un semplice chatbot, ma un’entità meditativa che stimola riflessioni esistenziali ambientate nei paesaggi urbani di un futuro radicalmente trasformato.
 
@@ -106,13 +98,6 @@ Il progetto sfrutta la separazione delle responsabilità per garantire sicurezza
 - **Design responsivo**: canvas 3D adattivo, scaling del FoV e layout fluido su desktop e mobile.  
 - **Palette visiva**: sfondi scuri (#081910, #0B2014), testo bianco, accenti #887FFF, #8CFFB1, #2E8B57 per pulsanti e indicatori.  
 - **Esperienza rituale**: disabilitazione temporanea del form in modalità Oracolo, promuovendo consapevolezza e riflessione in ogni interazione.
-
-## 📚 Fondamenti teorici
-
-- Donna Haraway – *A Cyborg Manifesto*  
-- Stacy Alaimo – *Bodily Natures*  
-- Generi: **Eco‑Horror**, **Biopunk**, **Body Horror**  
-- Opere: *Blade Runner*, *Annihilation*, *Avatar*, *Ready Player One*, *The Last of Us*, *Arcane*
 
 ## 🧑‍🎓 Autore
 

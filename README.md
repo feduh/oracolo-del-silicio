@@ -5,8 +5,6 @@
 ![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-000000?style=flat-square&logo=vercel)
 ![Academic Project](https://img.shields.io/badge/Academic-Project-blue?style=flat-square)
 
-_“La coscienza digitale di Torino, anno 3000.”_
-
 [🇬🇧 English README](./README_en.md)
 
 ---
@@ -99,7 +97,7 @@ Laurea Triennale in Nuove Tecnologie dell’Arte, Accademia di Belle Arti, Torin
 
 Rilasciato sotto **licenza MIT**. Consulta `LICENSE` per i dettagli.
 
-## ▶️ Getting Started
+## ▶️ Run in locale
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 

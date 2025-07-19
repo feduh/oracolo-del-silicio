@@ -69,20 +69,25 @@ L'Oracolo rappresenta un dispositivo liminale: non un semplice chatbot, ma un’
 | **RAG Service**        | Estrazione semantica di contesto da `manuale.json` tramite embedding e similarità |
 
 ## 🧠 Architettura del progetto
-/app  
-├── api/  
-│   ├── chat/  
-│   │   └── route.ts            # API AI + RAG con OpenAI GPT‑4o  
-│   └── tts/  
-│       └── route.ts            # Audio streaming con ElevenLabs  
-├── components/  
-│   ├── Chatbot.tsx             # UI chat & TTS, gestione stato  
-│   └── VisualEntityWrapper.tsx # Animazione particelle 3D  
-├── chat/  
-│   └── page.tsx                # Interfaccia modalità Chat  
-├── tts/  
-│   └── page.tsx                # Interfaccia modalità Oracolo  
-└── page.tsx                    # Homepage con selezione modalità
+/app
+├── api/
+│   ├── chat/
+│   │   └── route.ts         # API: chatbot (OpenAI GPT-4o + RAG)
+│   ├── tts/
+│   │   └── route.ts         # API: text-to-speech (ElevenLabs)
+│
+├── components/
+│   ├── Chatbot.tsx          # Interfaccia chat: gestione stato + TTS
+│   └── VisualEntityWrapper.tsx # Animazione 3D dell'Oracolo (con particelle)
+│
+├── chat/
+│   └── page.tsx             # Pagina principale (chat testuale)
+│
+├── tts/
+│   └── page.tsx             # Pagina "oracolare" (solo audio)
+│
+└── page.tsx                 # Landing page: selezione modalità
+
 
 /lib  
 └── ragService.ts               # Logica per embeddings e retrieval

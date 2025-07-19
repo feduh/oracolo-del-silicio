@@ -99,11 +99,11 @@ Rilasciato sotto **licenza MIT**. Consulta `LICENSE` per i dettagli.
 
 ## ▶️ Run in locale
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Questo è un progetto [Next.js](https://nextjs.org), inizializzato con [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+## Per iniziare
 
-First, run the development server:
+Per prima cosa, avvia il server di sviluppo:
 
 ```bash
 npm run dev
@@ -115,25 +115,25 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Apri [http://localhost:3000](http://localhost:3000) nel tuo browser per vedere il risultato.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Puoi iniziare a modificare la pagina agendo sul file `app/page.tsx`. La pagina si aggiornerà automaticamente mentre apporti modifiche.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Questo progetto utilizza [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) per ottimizzare e caricare automaticamente [Geist](https://vercel.com/font), una nuova famiglia di font creata da Vercel.
 
-## Learn More
+## Per saperne di più
 
-To learn more about Next.js, take a look at the following resources:
+Per approfondire l’uso di Next.js, consulta le seguenti risorse:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- [Next.js Documentation](https://nextjs.org/docs) – scopri tutte le funzionalità e le API.
+- [Learn Next.js](https://nextjs.org/learn) – un tutorial interattivo per imparare Next.js passo dopo passo.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Puoi anche visitare [il repository GitHub di Next.js](https://github.com/vercel/next.js) – feedback e contributi sono benvenuti!
 
-## Deploy on Vercel
+## Deployment su Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Il modo più semplice per pubblicare la tua app Next.js è utilizzare la [Piattaforma Vercel](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) creata dagli sviluppatori di Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Consulta la [documentazione sul deployment su Next.js](https://nextjs.org/docs/app/building-your-application/deploying) per ulteriori dettagli.
 
 
